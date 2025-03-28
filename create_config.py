@@ -34,7 +34,7 @@ def create_config(args):
     loss.ce_coef = 0.
 
     validation = config.validation = ml_collections.ConfigDict()
-    validation.batch_size = 1000
+    validation.batch_size = 400 # было 1000
     validation.num_gen_texts = 5000
     validation.texts_path = f"{config.work_dir}/generated_texts"
     validation.cfg_coef = 0.
