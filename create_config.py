@@ -30,11 +30,11 @@ def create_config(args):
     optim.linear_warmup = 500 * training.accum_batch_steps # was 5000
     optim.lr = 5e-5 # was 2e-4
     optim.min_lr = 5e-5 # was 2e-4
-    #optim.warmup_lr = 1e-8
-    #optim.weight_decay = 0.01
+    optim.warmup_lr = 1e-8
+    optim.weight_decay = 0.001
     optim.beta_1 = 0.9
     optim.beta_2 = 0.98
-    #optim.eps = 1e-6
+    optim.eps = 1e-6
 
     loss = config.loss = ml_collections.ConfigDict()
     loss.ce_coef = 0.
