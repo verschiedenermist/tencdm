@@ -7,23 +7,29 @@ def create_config(args):
     config = ml_collections.ConfigDict()
 
     config.work_dir = os.getcwd()
+
+    # google drive for checkpoints 
+    config.gdrive_folder = "/content/drive/MyDrive/checkpoints"
+    config.use_gdrive = True
     
     training = config.training = ml_collections.ConfigDict()
     training.accum_batch_steps = 1
-    training.training_iters = 200_000 * training.accum_batch_steps
+    training.training_iters = 50_000 * training.accum_batch_steps # was 200_000
     training.training_iters = training.training_iters
-    training.checkpoint_freq = 25_000 * training.accum_batch_steps
-    training.eval_freq = 25_000 * training.accum_batch_steps
-    training.batch_size = 512 // training.accum_batch_steps
+    training.checkpoint_freq = 5_000 * training.accum_batch_steps # was 25_000
+    training.eval_freq = 5_000 * training.accum_batch_steps # was 25_000
+    training.batch_size = 128 // training.accum_batch_steps # was 512
     training.ode_sampling = False
     training.checkpoints_folder = f"{config.work_dir}/checkpoints/"
+    # for saving to google drive
+    training.gdrive_checkpoints_folder = f"{config.gdrive_folder}/checkpoints/" if config.use_gdrive else ""
     training.checkpoint_name = ""
     
     optim = config.optim = ml_collections.ConfigDict()
     optim.grad_clip_norm = 1.
-    optim.linear_warmup = 5000 * training.accum_batch_steps
-    optim.lr = 2e-4
-    optim.min_lr = 2e-4
+    optim.linear_warmup = 2000 * training.accum_batch_steps # was 5000
+    optim.lr = 1e-4 # was 2e-4
+    optim.min_lr = 1e-4 # was 2e-4
     optim.warmup_lr = 1e-8
     optim.weight_decay = 0.01
     optim.beta_1 = 0.9
@@ -34,15 +40,16 @@ def create_config(args):
     loss.ce_coef = 0.
 
     validation = config.validation = ml_collections.ConfigDict()
-    validation.batch_size = 400 # было 1000
-    validation.num_gen_texts = 5000
+    validation.batch_size = 500 # was 1000
+    validation.num_gen_texts = 1000 # was 5000
     validation.texts_path = f"{config.work_dir}/generated_texts"
+    validation.gdrive_texts_path = f"{config.gdrive_folder}/generated_texts/" if config.use_gdrive else ""
     validation.cfg_coef = 0.
 
     dynamic = config.dynamic = ml_collections.ConfigDict()
     dynamic.solver = 'euler'
     dynamic.scheduler = args.scheduler
-    dynamic.N = 50
+    dynamic.N = 25 # was 50
     dynamic.beta_min = 0.1
     dynamic.beta_max = 20
     dynamic.ode_sampling = False
@@ -153,12 +160,12 @@ def create_datasets_config(args):
 def create_decoder_config():
     config = ml_collections.ConfigDict()
 
-    config.max_sequence_len = 128
+    config.max_sequence_len = 64 # was 128
     config.noise_sigma = 0.2
     config.lr = 1e-4
     config.betas = (0.9, 0.98)
     config.weight_decay = 0.001
-    config.batch_size = 64
+    config.batch_size = 32 # was 64
     config.epochs = 1
     config.max_norm = 1.0
     config.is_conditional = False
@@ -167,7 +174,7 @@ def create_decoder_config():
     config.eps = 0.001
     config.diffusion_forward = True
     config.suffix = ""
-    config.num_hidden_layers = 3
+    config.num_hidden_layers = 2 # was 3
     
     return config
 
