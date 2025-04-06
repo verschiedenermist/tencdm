@@ -14,11 +14,11 @@ def create_config(args):
     
     training = config.training = ml_collections.ConfigDict()
     training.accum_batch_steps = 1
-    training.training_iters = 50_000 * training.accum_batch_steps # was 200_000
+    training.training_iters = 10_000 * training.accum_batch_steps # was 200_000
     training.training_iters = training.training_iters
-    training.checkpoint_freq = 5_000 * training.accum_batch_steps # was 25_000
-    training.eval_freq = 5_000 * training.accum_batch_steps # was 25_000
-    training.batch_size = 128 // training.accum_batch_steps # was 512
+    training.checkpoint_freq = 1_000 * training.accum_batch_steps # was 25_000
+    training.eval_freq = 500 * training.accum_batch_steps # was 25_000
+    training.batch_size = 32 // training.accum_batch_steps # was 512
     training.ode_sampling = False
     training.checkpoints_folder = f"{config.work_dir}/checkpoints/"
     # for saving to google drive
@@ -27,14 +27,14 @@ def create_config(args):
     
     optim = config.optim = ml_collections.ConfigDict()
     optim.grad_clip_norm = 1.
-    optim.linear_warmup = 2000 * training.accum_batch_steps # was 5000
-    optim.lr = 1e-4 # was 2e-4
-    optim.min_lr = 1e-4 # was 2e-4
-    optim.warmup_lr = 1e-8
-    optim.weight_decay = 0.01
+    optim.linear_warmup = 500 * training.accum_batch_steps # was 5000
+    optim.lr = 5e-5 # was 2e-4
+    optim.min_lr = 5e-5 # was 2e-4
+    #optim.warmup_lr = 1e-8
+    #optim.weight_decay = 0.01
     optim.beta_1 = 0.9
     optim.beta_2 = 0.98
-    optim.eps = 1e-6
+    #optim.eps = 1e-6
 
     loss = config.loss = ml_collections.ConfigDict()
     loss.ce_coef = 0.
@@ -160,12 +160,12 @@ def create_datasets_config(args):
 def create_decoder_config():
     config = ml_collections.ConfigDict()
 
-    config.max_sequence_len = 64 # was 128
+    config.max_sequence_len = 32 # was 128
     config.noise_sigma = 0.2
     config.lr = 1e-4
     config.betas = (0.9, 0.98)
     config.weight_decay = 0.001
-    config.batch_size = 32 # was 64
+    config.batch_size = 16 # was 64
     config.epochs = 1
     config.max_norm = 1.0
     config.is_conditional = False
